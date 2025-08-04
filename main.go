@@ -43,13 +43,13 @@ func addVec(a, b Vec2) Vec2 {
 	return Vec2{X: a.X + b.X, Y: a.Y + b.Y}
 }
 
-type Dot struct {
+type Point struct {
 	position  Vec2
 	direction Vec2
 }
 
 type Game struct {
-	circles []Dot
+	points []Point
 }
 
 func (g *Game) Update() error {
@@ -57,20 +57,20 @@ func (g *Game) Update() error {
 		return ebiten.Termination
 	}
 
-	for i := range g.circles {
+	for i := range g.points {
 		// control speed
 		velocity := Vec2{
-			X: g.circles[i].direction.X * speed,
-			Y: g.circles[i].direction.Y * speed,
+			X: g.points[i].direction.X * speed,
+			Y: g.points[i].direction.Y * speed,
 		}
-		g.circles[i].position = addVec(g.circles[i].position, velocity)
+		g.points[i].position = addVec(g.points[i].position, velocity)
 
 		// control direction
-		if g.circles[i].position.X > screenWidth || g.circles[i].position.X < 0 {
-			g.circles[i].direction.X = -g.circles[i].direction.X
+		if g.points[i].position.X > screenWidth || g.points[i].position.X < 0 {
+			g.points[i].direction.X = -g.points[i].direction.X
 		}
-		if g.circles[i].position.Y > screenHeight || g.circles[i].position.Y < 0 {
-			g.circles[i].direction.Y = -g.circles[i].direction.Y
+		if g.points[i].position.Y > screenHeight || g.points[i].position.Y < 0 {
+			g.points[i].direction.Y = -g.points[i].direction.Y
 		}
 	}
 
@@ -78,29 +78,29 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	for _, c := range g.circles {
+	for _, c := range g.points {
 		vector.DrawFilledCircle(screen, c.position.X, c.position.Y, 1.5, color.White, true)
 	}
 
-	for i := 0; i < len(g.circles); i++ {
-		for j := i + 1; j < len(g.circles); j++ {
-			if g.circles[i].position.dist(g.circles[j].position) < connectDistance {
-				strokeWidth := (connectDistance / g.circles[i].position.dist(g.circles[j].position)) * 0.2
+	for i := 0; i < len(g.points); i++ {
+		for j := i + 1; j < len(g.points); j++ {
+			if g.points[i].position.dist(g.points[j].position) < connectDistance {
+				strokeWidth := (connectDistance / g.points[i].position.dist(g.points[j].position)) * 0.2
 				if strokeWidth > 1 {
 					strokeWidth = 1
 				}
-				vector.StrokeLine(screen, g.circles[i].position.X, g.circles[i].position.Y, g.circles[j].position.X, g.circles[j].position.Y, strokeWidth, color.White, true)
+				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, g.points[j].position.X, g.points[j].position.Y, strokeWidth, color.White, true)
 			}
 
 			// consider cursor position to connect dots
 			cx, cy := ebiten.CursorPosition()
 			cursorPos := Vec2{float32(cx), float32(cy)}
-			if g.circles[i].position.dist(cursorPos) < connectDistance + 30 {
-				strokeWidth := (connectDistance / g.circles[i].position.dist(cursorPos)) * 0.2
+			if g.points[i].position.dist(cursorPos) < connectDistance + 30 {
+				strokeWidth := (connectDistance / g.points[i].position.dist(cursorPos)) * 0.2
 				if strokeWidth > 1 {
 					strokeWidth = 1
 				}
-				vector.StrokeLine(screen, g.circles[i].position.X, g.circles[i].position.Y, cursorPos.X, cursorPos.Y, strokeWidth, color.White, true)
+				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, cursorPos.X, cursorPos.Y, strokeWidth, color.White, true)
 			}
 		}
 	}
@@ -116,10 +116,10 @@ func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Dots")
 	g := &Game{
-		circles: make([]Dot, circleCount),
+		points: make([]Point, circleCount),
 	}
 	for range circleCount {
-		g.circles = append(g.circles, Dot{
+		g.points = append(g.points, Point{
 			position: Vec2{
 				X: float32(rand.Intn(screenWidth)), Y: float32(rand.Intn(screenHeight)),
 			},
