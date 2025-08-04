@@ -91,6 +91,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				}
 				vector.StrokeLine(screen, g.circles[i].position.X, g.circles[i].position.Y, g.circles[j].position.X, g.circles[j].position.Y, strokeWidth, color.White, true)
 			}
+
+			// consider cursor position to connect dots
+			cx, cy := ebiten.CursorPosition()
+			cursorPos := Vec2{float32(cx), float32(cy)}
+			if g.circles[i].position.dist(cursorPos) < connectDistance + 30 {
+				strokeWidth := (connectDistance / g.circles[i].position.dist(cursorPos)) * 0.2
+				if strokeWidth > 1 {
+					strokeWidth = 1
+				}
+				vector.StrokeLine(screen, g.circles[i].position.X, g.circles[i].position.Y, cursorPos.X, cursorPos.Y, strokeWidth, color.White, true)
+			}
 		}
 	}
 
