@@ -142,6 +142,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (w, h int) {
 func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Dots")
+	ebiten.SetVsyncEnabled(false)
 	g := &Game{
 		points: make([]Point, 0),
 	}
