@@ -6,6 +6,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -33,9 +34,9 @@ func (v Vec2) normal() Vec2 {
 }
 
 func (v Vec2) dist(other Vec2) float32 {
-	deltaX := other.X - v.X
-	deltaY := other.Y - v.Y
-	len := math.Sqrt(float64(deltaX*deltaX) + float64(deltaY*deltaY))
+	dx := other.X - v.X
+	dy := other.Y - v.Y
+	len := math.Sqrt(float64(dx*dx) + float64(dy*dy))
 	return float32(math.Abs(len))
 }
 
@@ -77,13 +78,39 @@ func (g *Game) Update() error {
 	return nil
 }
 
+func dist(a, b Vec2) float32 {
+	dx := b.X - a.X
+	dy := b.Y - a.Y
+	len := math.Sqrt(float64(dx*dx) + float64(dy*dy))
+	return float32(math.Abs(len))
+}
+
+// returns a normalized random direction
+func randDir() Vec2 {
+	dir := Vec2{
+		X: float32(rand.Float64()*2 - 1),
+		Y: float32(rand.Float64()*2 - 1),
+	}
+	return dir.normal()
+}
+
 func (g *Game) Draw(screen *ebiten.Image) {
 	for _, c := range g.points {
 		vector.DrawFilledCircle(screen, c.position.X, c.position.Y, 1.5, color.White, true)
 	}
 
+	sort.Slice(g.points, func(i, j int) bool {
+		di := dist(g.points[i].position, Vec2{0, 0})
+		dj := dist(g.points[j].position, Vec2{0, 0})
+		return di < dj
+	})
+
 	for i := 0; i < len(g.points); i++ {
-		for j := i + 1; j < len(g.points); j++ {
+		countingLimit := i + 15
+		for j := i + 1; j < countingLimit; j++ {
+			if j >= len(g.points) {
+				break
+			}
 			if g.points[i].position.dist(g.points[j].position) < connectDistance {
 				strokeWidth := (connectDistance / g.points[i].position.dist(g.points[j].position)) * 0.2
 				if strokeWidth > 1 {
@@ -95,7 +122,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			// consider cursor position to connect dots
 			cx, cy := ebiten.CursorPosition()
 			cursorPos := Vec2{float32(cx), float32(cy)}
-			if g.points[i].position.dist(cursorPos) < connectDistance + 30 {
+			if g.points[i].position.dist(cursorPos) < connectDistance+30 {
 				strokeWidth := (connectDistance / g.points[i].position.dist(cursorPos)) * 0.2
 				if strokeWidth > 1 {
 					strokeWidth = 1
@@ -116,7 +143,7 @@ func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Dots")
 	g := &Game{
-		points: make([]Point, circleCount),
+		points: make([]Point, 0),
 	}
 	for range circleCount {
 		g.points = append(g.points, Point{
@@ -130,13 +157,4 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-// returns a normalized random direction
-func randDir() Vec2 {
-	dir := Vec2{
-		X: float32(rand.Float64()*2 - 1),
-		Y: float32(rand.Float64()*2 - 1),
-	}
-	return dir.normal()
 }
