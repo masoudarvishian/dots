@@ -106,8 +106,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			}
 			if g.points[i].position.dist(g.points[j].position) < connectDistance {
 				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(g.points[j].position)/100))))
-				if strokeWidth > 0.7 {
-					strokeWidth = 0.7
+				if strokeWidth > 0.5 {
+					strokeWidth = 0.5
 				}
 				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, g.points[j].position.X, g.points[j].position.Y, strokeWidth, color.White, true)
 			}
@@ -117,8 +117,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			cursorPos := Vec2{float32(cx), float32(cy)}
 			if g.points[i].position.dist(cursorPos) < connectDistance+30 {
 				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(cursorPos)/100))))
-				if strokeWidth > 0.7 {
-					strokeWidth = 0.7
+				if strokeWidth > 0.5 {
+					strokeWidth = 0.5
 				}
 				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, cursorPos.X, cursorPos.Y, strokeWidth, color.White, true)
 			}
