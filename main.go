@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	screenWidth     = 1600
-	screenHeight    = 900
-	pointsCount     = 200
+	screenWidth     = 1280
+	screenHeight    = 720
+	pointsCount     = 150
 	speed           = 0.2
 	connectDistance = 100
 )
