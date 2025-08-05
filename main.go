@@ -16,7 +16,7 @@ import (
 const (
 	screenWidth     = 1600
 	screenHeight    = 900
-	circleCount     = 200
+	pointsCount     = 200
 	speed           = 0.2
 	connectDistance = 100
 )
@@ -105,7 +105,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				break
 			}
 			if g.points[i].position.dist(g.points[j].position) < connectDistance {
-				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(g.points[j].position)/100))))
+				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(g.points[j].position) / 100))))
 				if strokeWidth > 0.5 {
 					strokeWidth = 0.5
 				}
@@ -116,7 +116,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			cx, cy := ebiten.CursorPosition()
 			cursorPos := Vec2{float32(cx), float32(cy)}
 			if g.points[i].position.dist(cursorPos) < connectDistance+30 {
-				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(cursorPos)/100))))
+				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(cursorPos) / 100))))
 				if strokeWidth > 0.5 {
 					strokeWidth = 0.5
 				}
@@ -139,7 +139,7 @@ func main() {
 	g := &Game{
 		points: make([]Point, 0),
 	}
-	for range circleCount {
+	for range pointsCount {
 		g.points = append(g.points, Point{
 			position: Vec2{
 				X: float32(rand.Intn(screenWidth)), Y: float32(rand.Intn(screenHeight)),
