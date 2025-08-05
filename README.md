@@ -1,1 +1,1 @@
-![Demo](dots_demo.gif)
+![Demo](demo.gif)
