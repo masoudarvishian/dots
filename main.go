@@ -99,7 +99,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	})
 
 	for i := 0; i < len(g.points); i++ {
-		countingLimit := i + 50
+		countingLimit := i + 20
 		for j := i + 1; j < countingLimit; j++ {
 			if j >= len(g.points) {
 				break
