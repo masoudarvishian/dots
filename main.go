@@ -18,7 +18,7 @@ const (
 	screenHeight    = 900
 	circleCount     = 200
 	speed           = 0.3
-	connectDistance = 80
+	connectDistance = 100
 )
 
 type Vec2 struct {
@@ -78,13 +78,6 @@ func (g *Game) Update() error {
 	return nil
 }
 
-func dist(a, b Vec2) float32 {
-	dx := b.X - a.X
-	dy := b.Y - a.Y
-	len := math.Sqrt(float64(dx*dx) + float64(dy*dy))
-	return float32(math.Abs(len))
-}
-
 // returns a normalized random direction
 func randDir() Vec2 {
 	dir := Vec2{
@@ -100,19 +93,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	sort.Slice(g.points, func(i, j int) bool {
-		di := dist(g.points[i].position, Vec2{0, 0})
-		dj := dist(g.points[j].position, Vec2{0, 0})
+		di := g.points[i].position.dist(Vec2{0, 0})
+		dj := g.points[j].position.dist(Vec2{0, 0})
 		return di < dj
 	})
 
 	for i := 0; i < len(g.points); i++ {
-		countingLimit := i + 15
+		countingLimit := i + 50
 		for j := i + 1; j < countingLimit; j++ {
 			if j >= len(g.points) {
 				break
 			}
 			if g.points[i].position.dist(g.points[j].position) < connectDistance {
-				strokeWidth := (connectDistance / g.points[i].position.dist(g.points[j].position)) * 0.2
+				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(g.points[j].position)/100))))
 				if strokeWidth > 1 {
 					strokeWidth = 1
 				}
@@ -123,7 +116,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			cx, cy := ebiten.CursorPosition()
 			cursorPos := Vec2{float32(cx), float32(cy)}
 			if g.points[i].position.dist(cursorPos) < connectDistance+30 {
-				strokeWidth := (connectDistance / g.points[i].position.dist(cursorPos)) * 0.2
+				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(cursorPos)/100))))
 				if strokeWidth > 1 {
 					strokeWidth = 1
 				}
