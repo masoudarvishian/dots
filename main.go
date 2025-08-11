@@ -125,7 +125,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("FPS: %v, TPS: %v", int(ebiten.ActualFPS()), int(ebiten.ActualTPS())), 10, 10)
+	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("TPS: %v", uint8(ebiten.ActualTPS())), 10, 10)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (w, h int) {
@@ -135,7 +135,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (w, h int) {
 func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Dots")
-	ebiten.SetVsyncEnabled(false)
 	g := &Game{
 		points: make([]Point, 0),
 	}
