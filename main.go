@@ -7,6 +7,7 @@ import (
 	"math"
 	"math/rand"
 	"sort"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -17,7 +18,7 @@ const (
 	screenWidth     = 1280
 	screenHeight    = 720
 	pointsCount     = 150
-	speed           = 0.2
+	speed           = 10
 	connectDistance = 100
 )
 
@@ -50,7 +51,9 @@ type Point struct {
 }
 
 type Game struct {
-	points []Point
+	points        []Point
+	deltaTime     float32
+	timePrevFrame time.Time
 }
 
 func (g *Game) Update() error {
@@ -58,11 +61,15 @@ func (g *Game) Update() error {
 		return ebiten.Termination
 	}
 
+	now := time.Now()
+	g.deltaTime = float32(now.Sub(g.timePrevFrame).Seconds())
+	g.timePrevFrame = now
+
 	for i := range g.points {
 		// control speed
 		velocity := Vec2{
-			X: g.points[i].direction.X * speed,
-			Y: g.points[i].direction.Y * speed,
+			X: g.points[i].direction.X * g.deltaTime * speed,
+			Y: g.points[i].direction.Y * g.deltaTime * speed,
 		}
 		g.points[i].position = addVec(g.points[i].position, velocity)
 
@@ -136,7 +143,8 @@ func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Dots")
 	g := &Game{
-		points: make([]Point, 0),
+		points:        make([]Point, 0),
+		timePrevFrame: time.Now(),
 	}
 	for range pointsCount {
 		g.points = append(g.points, Point{
