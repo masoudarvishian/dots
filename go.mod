@@ -1,6 +1,6 @@
 module dots
 
-go 1.25.1
+go 1.25.3
 
 require github.com/hajimehoshi/ebiten/v2 v2.9.0
 
