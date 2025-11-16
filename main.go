@@ -96,7 +96,7 @@ func randDir() Vec2 {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	for _, c := range g.points {
-		vector.DrawFilledCircle(screen, c.position.X, c.position.Y, 1.5, color.White, true)
+		vector.FillCircle(screen, c.position.X, c.position.Y, 1.5, color.White, true)
 	}
 
 	sort.Slice(g.points, func(i, j int) bool {
@@ -117,17 +117,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					strokeWidth = 0.5
 				}
 				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, g.points[j].position.X, g.points[j].position.Y, strokeWidth, color.White, true)
-			}
-
-			// consider cursor position to connect dots
-			cx, cy := ebiten.CursorPosition()
-			cursorPos := Vec2{float32(cx), float32(cy)}
-			if g.points[i].position.dist(cursorPos) < connectDistance+30 {
-				strokeWidth := float32(math.Abs(-1 + float64((g.points[i].position.dist(cursorPos) / 100))))
-				if strokeWidth > 0.5 {
-					strokeWidth = 0.5
-				}
-				vector.StrokeLine(screen, g.points[i].position.X, g.points[i].position.Y, cursorPos.X, cursorPos.Y, strokeWidth, color.White, true)
 			}
 		}
 	}
